@@ -11,7 +11,7 @@
         <script type="text/javascript">
             $(document).ready(function(){
                 var socket = io.connect(
-                    'http://localhost:5000',
+                    '192.168.0.105:5619',
                     {transports: ['websocket']}
                 );
                 socket.on('connect', function() {

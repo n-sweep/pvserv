@@ -1,11 +1,10 @@
 import os
 import time
+import socket
 import logging
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_socketio import SocketIO
-
-logging.basicConfig(filename='log.log', level=logging.INFO)
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*", transport='websocket')
@@ -18,36 +17,53 @@ def index():
 
 @socketio.on('connect')
 def handle_connect():
-    socketio.start_background_task(
-        target=check_update,
-        file=app.config['file'],
-        app=app,
-        socketio=socketio,
-        i=app.config['interval']
-    )
+    handler = Handler(app, socketio)
+    socketio.start_background_task(target=handler.watch_for_modification)
 
 
-def emit_update(file):
-    with open(file, 'r') as f:
-        socketio.emit('update', f.read())
+class Handler:
+    def __init__(self, app, socketio):
+        self.mt = 0
+        self.app = app
+        self.socketio = socketio
 
+        self.ensure_directory()
 
-def check_update(file, app, socketio, i):
-    emit_update(file)
-    mt = os.path.getmtime(file)
-    while True:
-        new_mt = os.path.getmtime(file)
-        if new_mt != mt:
-            mt = new_mt
-            emit_update(file)
+    def watch_for_modification(self):
+        file = self.app.config['file']
+        i = self.app.config['interval']
 
-        socketio.sleep(i)
+        while True:
+
+            if os.path.exists(file):
+                mt = os.path.getmtime(file)
+                if mt != self.mt:
+                    self.mt = mt
+                    with open(file, 'r') as f:
+                        self.socketio.emit('update', f.read())
+
+            self.socketio.sleep(i)
+
+    def ensure_directory(self):
+        file = self.app.config['file']
+        dir = os.path.dirname(file)
+        if not os.path.exists(dir):
+            os.makedirs(dir)
 
 
 def main():
-    app.config['file'] = './plot.json'
-    app.config['interval'] = 0.1
-    socketio.run(app, debug=True)
+    host_name = socket.getfqdn()
+    ip = socket.gethostbyname(host_name)
+    logging.basicConfig(filename='pvserv.log', level=logging.INFO)
+
+    config = {
+        'file': '/tmp/vis/plot.json',
+        'interval': 0.1
+    }
+
+    app.config.update(config)
+
+    socketio.run(app, host=ip, port=5619, debug=True)
 
 
 if __name__ == "__main__":
