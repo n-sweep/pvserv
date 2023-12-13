@@ -3,16 +3,10 @@ import time
 import socket
 import logging
 
-from flask import Flask, render_template, request
 from flask_socketio import SocketIO
+from app import app
 
-app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*", transport='websocket')
-
-
-@app.route('/')
-def index():
-    return render_template('index.html')
 
 
 @socketio.on('connect')

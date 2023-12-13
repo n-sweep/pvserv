@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Plotly Live-update Graph</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.min.js"></script>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        <script src="{{ url_for('static', filename='js/sockets.js') }}"></script>
+    </head>
+    <body style="background-color: #1b1b1b">
+        <div id="graph"></div>
+    </body>
+</html>

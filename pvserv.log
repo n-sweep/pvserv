@@ -959,3 +959,64 @@ INFO:werkzeug: * Restarting with watchdog (inotify)
 INFO:werkzeug: * Restarting with watchdog (inotify)
 WARNING:werkzeug: * Debugger is active!
 INFO:werkzeug: * Debugger PIN: 525-279-433
+INFO:werkzeug: * Restarting with watchdog (inotify)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 525-279-433
+INFO:werkzeug: * Detected change in '/home/n/Documents/Python/pvserv/run_flask.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/Documents/Python/pvserv/run_flask.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/Documents/Python/pvserv/run_flask.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/Documents/Python/pvserv/run_flask.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/Documents/Python/pvserv/run_flask.py', reloading
+INFO:werkzeug: * Restarting with watchdog (inotify)
+INFO:werkzeug: * Restarting with watchdog (inotify)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 525-279-433
+INFO:werkzeug: * Restarting with watchdog (inotify)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 525-279-433
+INFO:werkzeug: * Detected change in '/home/n/Documents/Python/pvserv/app/routes.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/Documents/Python/pvserv/app/routes.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/Documents/Python/pvserv/app/routes.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/Documents/Python/pvserv/app/routes.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/Documents/Python/pvserv/app/routes.py', reloading
+INFO:werkzeug: * Restarting with watchdog (inotify)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 525-279-433
+INFO:werkzeug: * Restarting with watchdog (inotify)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 525-279-433
+INFO:werkzeug: * Restarting with watchdog (inotify)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 525-279-433
+INFO:werkzeug: * Restarting with watchdog (inotify)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 525-279-433
+INFO:werkzeug: * Restarting with watchdog (inotify)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 525-279-433
+INFO:werkzeug: * Detected change in '/home/n/anaconda3/lib/python3.8/site-packages/pyfiglet/__init__.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/anaconda3/lib/python3.8/site-packages/pyfiglet/__init__.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/anaconda3/lib/python3.8/site-packages/pyfiglet/__init__.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/anaconda3/lib/python3.8/site-packages/pyfiglet/__main__.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/anaconda3/lib/python3.8/site-packages/pyfiglet/__main__.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/anaconda3/lib/python3.8/site-packages/pyfiglet/__main__.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/anaconda3/lib/python3.8/site-packages/pyfiglet/test.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/anaconda3/lib/python3.8/site-packages/pyfiglet/test.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/anaconda3/lib/python3.8/site-packages/pyfiglet/test.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/anaconda3/lib/python3.8/site-packages/pyfiglet/version.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/anaconda3/lib/python3.8/site-packages/pyfiglet/version.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/anaconda3/lib/python3.8/site-packages/pyfiglet/version.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/anaconda3/lib/python3.8/site-packages/pyfiglet/fonts/__init__.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/anaconda3/lib/python3.8/site-packages/pyfiglet/fonts/__init__.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/anaconda3/lib/python3.8/site-packages/pyfiglet/fonts/__init__.py', reloading
+INFO:werkzeug: * Restarting with watchdog (inotify)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 525-279-433
+INFO:werkzeug: * Detected change in '/home/n/Documents/Python/pvserv/run_flask.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/Documents/Python/pvserv/run_flask.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/Documents/Python/pvserv/run_flask.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/Documents/Python/pvserv/run_flask.py', reloading
+INFO:werkzeug: * Detected change in '/home/n/Documents/Python/pvserv/run_flask.py', reloading
+INFO:werkzeug: * Restarting with watchdog (inotify)
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 525-279-433
