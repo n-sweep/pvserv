@@ -1,9 +1,3 @@
-# README
+# PVServ
 
-```sh
-ipython --no-autoindent
-%load_ext autoreload
-%autoreload 2
-clear
-```
-
+A local server for viewing plotly plots

@@ -1,7 +1,7 @@
 console.log('loaded');
 $(document).ready(function(){
     var socket = io.connect(
-        '192.168.0.105:5619',
+        ip_address+':5619',
         {transports: ['websocket']}
     );
     socket.on('connect', function() {
