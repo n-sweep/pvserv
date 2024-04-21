@@ -6,8 +6,8 @@ function M.start_server()
     if job_id then
         print('Server is already running')
     else
-        local script_path = debug.getinfo(1).short_src
-        local server_path = script_path:gsub("/lua/telemux/[^/]+$", "/server/run.py")
+        local script_path = debug.getinfo(1).source:gsub("@", "")
+        local server_path = script_path:gsub("/lua/pvserv/[^/]+$", "/server/run.py")
         job_id = vim.fn.jobstart(
             'python ' .. server_path,
             { on_exit = function() print('Server exited'); job_id = nil end }
