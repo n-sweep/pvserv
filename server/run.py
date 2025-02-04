@@ -3,50 +3,62 @@ from app import app, socketio
 import logging
 import os
 import socket
+import sqlite3
 import threading
 import webbrowser
 
+base_dir = os.path.dirname(os.path.abspath(__file__))
 
-def get_lan_ip():
+
+def get_lan_ip() -> None:
+    """get the LAN IP address of the machine running the server"""
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(('8.8.8.8', 80))
         return s.getsockname()[0]
-
     except socket.error:
         return None
 
 
-def ensure_dir(dir):
-    if not os.path.isdir(dir):
-        os.makedirs(dir)
+def launch_server(config: dict, open_browser: bool = False) -> None:
+    """Launch the server and optionally open in the browser"""
+    host = config['ip']
+    port = config['port']
 
-
-def launch_server(host, port, config):
+    logging.basicConfig(filename=config['log_file'], level=logging.INFO)
     app.config.update(config)
-    threading.Timer(0.5, webbrowser.open_new, [app.config['url']]).start()
-    socketio.run(app, host=host, port=port, allow_unsafe_werkzeug=True)
+
+    # ensure the database exists
+    with sqlite3.connect(config['db_file']) as con:
+        with open(f'{base_dir}/queries/create.sql', 'r') as f:
+            cur = con.cursor()
+            cur.execute(f.read())
+            con.commit()
+            cur.close()
+
+    if open_browser:
+        url = f'http://{host}:{port}'
+        threading.Timer(0.5, webbrowser.open_new, [url]).start()
+
+    socketio.run(
+        app,
+        host=host,
+        port=port,
+        debug=True,
+        allow_unsafe_werkzeug=True
+    )
 
 
 def main():
-    plot_file = '/tmp/vis/plot.json'
-    log_file = os.path.expanduser('~/.local/share/nvim/pvserv.log')
-
-    logging.basicConfig(filename=log_file, level=logging.INFO)
-
-    ip = get_lan_ip()
-    port = 5619
 
     config = {
-        'file': plot_file,
-        'interval': 0.1,
-        'ip': ip,
-        'port': port,
-        'url': f'http://{ip}:{port}'
+        'ip': get_lan_ip(),
+        'port': 5619,
+        'db_file': os.path.expanduser('~/.local/share/nvim/pvserv.db'),
+        'log_file': os.path.expanduser('~/.local/share/nvim/pvserv.log')
     }
 
-    ensure_dir(os.path.dirname(plot_file))
-    launch_server(ip, port, config)
+    launch_server(config) #, open_browser=True)
 
 
 if __name__ == "__main__":
