@@ -1,4 +1,4 @@
-from app import app, socketio
+from server.app import app, socketio
 
 import logging
 import os
@@ -30,7 +30,7 @@ def launch_server(config: dict, open_browser: bool = False) -> None:
 
     # ensure the database exists
     with sqlite3.connect(config['db_file']) as con:
-        with open(f'{base_dir}/queries/create.sql', 'r') as f:
+        with open(f'{base_dir}/server/queries/create.sql', 'r') as f:
             cur = con.cursor()
             cur.execute(f.read())
             con.commit()
@@ -53,10 +53,10 @@ def main():
 
     config = {
         'broadcast_ip': '0.0.0.0',
-        'socket_ip': '100.122.54.30',
-        'port': 5619,
-        'db_file': os.path.expanduser('~/.local/share/nvim/pvserv.db'),
-        'log_file': os.path.expanduser('~/.local/share/nvim/pvserv.log')
+        'socket_ip': os.environ.get('TS_IP', get_lan_ip()),
+        'port': 8080,
+        'db_file': os.path.expanduser('/app/data/pvserv.db'),
+        'log_file': os.path.expanduser('/app/data/pvserv.log')
     }
 
     launch_server(config) #, open_browser=True)

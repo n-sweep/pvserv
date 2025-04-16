@@ -1,7 +1,7 @@
 import sqlite3
 
 from flask import request, render_template
-from app import app, socketio
+from server.app import app, socketio
 
 
 @app.route('/')

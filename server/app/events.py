@@ -1,6 +1,6 @@
 import sqlite3
 
-from app import app, socketio
+from server.app import app, socketio
 
 
 def get_recent_plots(n: int = 1) -> list:
