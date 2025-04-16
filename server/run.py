@@ -22,7 +22,7 @@ def get_lan_ip() -> None:
 
 def launch_server(config: dict, open_browser: bool = False) -> None:
     """Launch the server and optionally open in the browser"""
-    host = config['ip']
+    host = config['broadcast_ip']
     port = config['port']
 
     logging.basicConfig(filename=config['log_file'], level=logging.INFO)
@@ -52,7 +52,8 @@ def launch_server(config: dict, open_browser: bool = False) -> None:
 def main():
 
     config = {
-        'ip': get_lan_ip(),
+        'broadcast_ip': '0.0.0.0',
+        'socket_ip': '100.122.54.30',
         'port': 5619,
         'db_file': os.path.expanduser('~/.local/share/nvim/pvserv.db'),
         'log_file': os.path.expanduser('~/.local/share/nvim/pvserv.log')

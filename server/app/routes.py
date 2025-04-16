@@ -8,7 +8,7 @@ from app import app, socketio
 def index() -> str:
     return render_template(
         'index.html',
-        ip_address=app.config['ip'],
+        ip_address=app.config['socket_ip'],
         port=app.config['port'],
     )
 

@@ -8,6 +8,7 @@ $(document).ready(function() {
     );
 
 
+    // toggle the selected class in the given element
     function toggleSelected(element) {
         const previouslySelected = document.querySelector('.plot-item.selected');
         if (previouslySelected) { previouslySelected.classList.remove('selected') };
@@ -15,6 +16,7 @@ $(document).ready(function() {
     };
 
 
+    // determine the interior size of a container element
     function elementInteriorSize(element) {
         const style = window.getComputedStyle(element);
 
@@ -31,15 +33,15 @@ $(document).ready(function() {
 
 
     function rgbToHex(rgb) {
-        // Extract the RGB components from the string using a regular expression
+        // extract the RGB components from the string using a regular expression
         const rgbValues = rgb.match(/\d+/g);
 
-        // Convert the components to integers and then to a hex string
+        // convert the components to integers and then to a hex string
         const r = parseInt(rgbValues[0], 10);
         const g = parseInt(rgbValues[1], 10);
         const b = parseInt(rgbValues[2], 10);
 
-        // Return the hex value as a string, formatted as #RRGGBB
+        // return the hex value as a string, formatted as #RRGGBB
         return `#${(1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1).toUpperCase()}`;
     }
 
@@ -55,19 +57,19 @@ $(document).ready(function() {
 
     function renderPlot(data, relayout=false, height, width) {
         const element = 'plot';
-        var parsed = JSON.parse(data.json);
+        var figure = JSON.parse(JSON.stringify(data.json));
 
         const date = document.getElementById('created-date');
         const title = document.getElementById('title-text');
-        const plotTitle = parsed.layout.title;
+        const plotTitle = figure.layout.title;
         const container = document.getElementById(element);
         const [contHeight, contWidth] = elementInteriorSize(container);
 
         // set colors
-        container.style.backgroundColor = processPlotyColor(parsed.layout.template.layout.paper_bgcolor);
+        container.style.backgroundColor = processPlotyColor(figure.layout.template.layout.paper_bgcolor);
         container.style.setProperty(
             '--li-text-color',
-            processPlotyColor(parsed.layout.template.layout.font.color)
+            processPlotyColor(figure.layout.template.layout.font.color)
         );
 
         // set the title text
@@ -77,23 +79,23 @@ $(document).ready(function() {
 
         // calculate width & height
 
-        parsed.layout.width = width || parsed.layout.width || contWidth;
+        figure.layout.width = width || figure.layout.width || contWidth;
 
         // adjHeight maxes out at 5:3
-        var adjHeight = parsed.layout.width * 0.6;
+        var adjHeight = figure.layout.width * 0.6;
         if (adjHeight > contHeight) { adjHeight = contHeight };
 
-        parsed.layout.height = height || parsed.layout.height || contHeight;  // adjHeight;
+        figure.layout.height = height || figure.layout.height || contHeight;  // adjHeight;
 
         // render or relayout the plot
         if (relayout) {
             Plotly.relayout(element, {
-                height: parsed.layout.height,
-                width: parsed.layout.width
+                height: figure.layout.height,
+                width: figure.layout.width
             });
 
         } else {
-            Plotly.newPlot(element, parsed);
+            Plotly.newPlot(element, figure);
         };
 
         currentPlotData = data;
@@ -102,8 +104,7 @@ $(document).ready(function() {
 
     function renderPlotThumbnail(data, callback) {
         // generate a 300x500 png of the given plot
-        var parsed = JSON.parse(data.json);
-        Plotly.toImage(parsed, { format: 'png', height: 300, width: 500 })
+        Plotly.toImage(data.json, { format: 'png', height: 300, width: 500 })
         .then(function(imageData) { callback(imageData) })
         .catch(function(error) {
             console.error('Error generating thumbnail:', error)
@@ -113,13 +114,13 @@ $(document).ready(function() {
 
     function createPlotListItem(data) {
         const li = document.createElement('li');
-        var parsed = JSON.parse(data.json);
+        var figure = data.json;
 
         // set colors
-        li.style.backgroundColor = processPlotyColor(parsed.layout.template.layout.paper_bgcolor);
+        li.style.backgroundColor = processPlotyColor(figure.layout.template.layout.paper_bgcolor);
         li.style.setProperty(
             '--li-text-color',
-            processPlotyColor(parsed.layout.template.layout.font.color)
+            processPlotyColor(figure.layout.template.layout.font.color)
         );
 
         li.classList.add('plot-item');
@@ -179,22 +180,27 @@ $(document).ready(function() {
         console.error('Error:', error);
     });
 
-    socket.on('initialize', function(data) {
+    socket.on('initialize', function(data_list) {
 
         // if no plots, return and leave page blank
-        if (data.length === 0) {
+        if (data_list.length === 0) {
             console.log('no plots to render');
             return;
         };
 
+        data_list.forEach(data => {
+            data.json = JSON.parse(data.json);
+        });
+
         // populate the sidebar with list of plots
-        initializePlotList(data);
+        initializePlotList(data_list);
         // render the top plot in the main view
-        renderPlot(data[0]);
+        renderPlot(data_list[0]);
     });
 
     socket.on('update', function(data) {
-        insertIntoPlotList(data)
+        data.json = JSON.parse(data.json);
+        insertIntoPlotList(data);
         renderPlot(data);
     });
 
