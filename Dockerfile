@@ -38,4 +38,4 @@ CMD [ "python", "main.py" ]
 # -p 8080:8080 \
 # pvserv
 
-# tailscale serve http /pvserv http://localhost:8080
+# tailscale serve --bg --http 80 --set-path /pvserv http://localhost:8080

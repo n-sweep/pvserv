@@ -1,4 +1,4 @@
-from server.app import app, socketio
+from app import app, socketio
 
 import logging
 import os

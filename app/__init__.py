@@ -9,4 +9,4 @@ socketio = SocketIO(
     use_reloader=False
 )
 
-from server.app import routes, events
+from app import routes, events
