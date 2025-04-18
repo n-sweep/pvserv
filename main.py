@@ -30,7 +30,7 @@ def launch_server(config: dict, open_browser: bool = False) -> None:
 
     # ensure the database exists
     with sqlite3.connect(config['db_file']) as con:
-        with open(f'{base_dir}/server/queries/create.sql', 'r') as f:
+        with open(f'{base_dir}/queries/create.sql', 'r') as f:
             cur = con.cursor()
             cur.execute(f.read())
             con.commit()
@@ -55,15 +55,15 @@ def main():
         'broadcast_ip': '0.0.0.0',
         'socket_ip': os.environ.get('TS_IP', get_lan_ip()),
         'port': 8080,
-        'db_file': os.path.expanduser('/app/data/pvserv.db'),
-        'log_file': os.path.expanduser('/app/data/pvserv.log')
+        'db_file': f'{base_dir}/.data/pvserv.db',
+        'log_file': f'{base_dir}/.data/pvserv.log'
     }
 
-    launch_server(config) #, open_browser=True)
+    try:
+        launch_server(config) #, open_browser=True)
+    except Exception as e:
+        logging.info(e)
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:
-        logging.info(e)
+    main()

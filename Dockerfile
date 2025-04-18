@@ -28,13 +28,13 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 EXPOSE 8080
 
-CMD [ "python", "main.py" ]
+# CMD [ "python", "main.py" ]
 
 # docker build -t pvserv .
 
 # docker run -dit --name pvserv \
 # -e TS_IP="$(tailscale ip --4)" \
-# -v "${PWD}"/data:/app/data \
+# -v "${PWD}"/.data:/app/.data \
 # -p 8080:8080 \
 # pvserv
 
