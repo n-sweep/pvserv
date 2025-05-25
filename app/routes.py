@@ -1,3 +1,4 @@
+import json
 import sqlite3
 
 from flask import request, render_template
@@ -15,7 +16,7 @@ def index() -> str:
 
 @app.route('/plot')
 def handle_new_plot() -> str:
-    data = request.json
+    data = json.dumps(request.json)
 
     with sqlite3.connect(app.config['db_file']) as con:
         cur = con.cursor()
