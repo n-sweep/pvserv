@@ -14,9 +14,9 @@ def index() -> str:
     )
 
 
-@app.route('/plot')
+@app.route('/plot', methods=['POST'])
 def handle_new_plot() -> str:
-    data = json.dumps(request.json)
+    data = request.data.decode('utf-8')
 
     with sqlite3.connect(app.config['db_file']) as con:
         cur = con.cursor()
