@@ -98,7 +98,7 @@
         default = pkgs.writeShellApplication {
           name = "pvserv";
           runtimeInputs = [ venv ];
-          text = ''${venv}/bin/python ${./.}/src/manage.py runserver "$@"'';
+          text = ''${venv}/bin/python "$(git rev-parse --show-toplevel)"/src/manage.py runserver "$@"'';
         };
         # build a docker image with `nix build .#docker`
         docker = pkgs.dockerTools.buildLayeredImage {

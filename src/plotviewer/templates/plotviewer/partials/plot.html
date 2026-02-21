@@ -1,6 +1,5 @@
-<div class="plot-wrapper" data-plot-json="{{ plot.json }}">
-    <div class="plot-meta">
-        <span class="plot-date">{{ plot.created_at|date:"Y-m-d H:i:s" }}</span>
-    </div>
-    <div id="plot" class="plot-render"></div>
+<div data-plot-json="{{ plot.json }}">
+    <div id="plot"></div>
 </div>
+<span id="created-date" hx-swap-oob="true">{{ plot.created_at|date:"Y-m-d H:i:s" }}</span>
+
