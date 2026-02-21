@@ -96,9 +96,9 @@
       {
         # build a package to run with `nix run`
         default = pkgs.writeShellApplication {
-          name = "...";
+          name = "pvserv";
           runtimeInputs = [ venv ];
-          text = ''${venv}/bin/python ${./.}/main.py'';
+          text = ''${venv}/bin/python ${./.}/src/manage.py runserver "$@"'';
         };
         # build a docker image with `nix build .#docker`
         docker = pkgs.dockerTools.buildLayeredImage {
