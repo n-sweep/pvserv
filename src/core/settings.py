@@ -6,7 +6,9 @@ SECRET_KEY = "django-insecure-%li@l%au+qx^wy3)ig7lw&+n-+r-s8#1w#@7e8qr+l^epc^qoe
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+APPEND_SLASH = False
+
+ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "plotviewer.apps.PlotviewerConfig",

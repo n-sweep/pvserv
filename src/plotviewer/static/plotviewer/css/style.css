@@ -29,6 +29,11 @@ body {
     padding: 5px;
 }
 
+#plot .plotly {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
 #sidebar {
     height: calc(100vh - 25px);
     margin-bottom: 50px;
@@ -50,6 +55,11 @@ body {
     background-color: #111;
     border-radius: 5px;
     margin-bottom: 5px;
+    overflow: hidden;
+}
+
+.plot-item-date {
+    display: block;
     padding: 5px;
 }
 

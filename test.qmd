@@ -1,0 +1,21 @@
+# This is a test
+
+hello
+
+```{python}
+import plotly.express as px
+import random
+
+n = random.randint(1000, 9999)
+x = [random.uniform(0, 10) for _ in range(20)]
+y = [random.uniform(0, 10) for _ in range(20)]
+
+fig = px.scatter(x=x, y=y, title=f"Scatter #{n}")
+fig.show()
+```
+
+```{python}
+print('hello world')
+print(1 + 2)
+print('goodbye friend')
+```

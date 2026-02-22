@@ -1,5 +1,4 @@
-<div data-plot-json="{{ plot.json }}">
+<div data-plot-json="{{ plot.json }}" data-created-at="{{ plot.created_at|date:"Y-m-d H:i:s" }}">
     <div id="plot"></div>
 </div>
-<span id="created-date" hx-swap-oob="true">{{ plot.created_at|date:"Y-m-d H:i:s" }}</span>
 

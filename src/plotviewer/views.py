@@ -28,7 +28,7 @@ def plot_detail(request, plot_id):
     return render(request, "plotviewer/partials/plot.html", {"plot": plot})
 
 
-def sse_stream(request):
+def sse_stream(_):
     def event_generator():
         q = broker.subscribe()
         yield ": connected\n\n"
