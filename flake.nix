@@ -104,15 +104,13 @@
         docker = pkgs.dockerTools.buildLayeredImage {
           name = "pvserv";
           tag = "latest";
-          contents = [ venv pkgs.coreutils ];
+          contents = [ venv pkgs.coreutils pkgs.bash ];
           config = {
             Cmd = [
-              "${venv}/bin/python"
-              "${./src/manage.py}"
-              "runserver"
-              "0.0.0.0:8080"
+              "${pkgs.bash}/bin/bash"
+              "-c"
+              "${venv}/bin/python ${./src/manage.py} migrate && ${venv}/bin/python ${./src/manage.py} runserver 0.0.0.0:8000"
             ];
-            # Env = [ "..." ];
           };
           # extraCommands = ''
           #   mkdir -p .data
