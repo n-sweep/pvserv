@@ -102,12 +102,17 @@
         };
         # build a docker image with `nix build .#docker`
         docker = pkgs.dockerTools.buildLayeredImage {
-          name = "...";
+          name = "pvserv";
           tag = "latest";
           contents = [ venv pkgs.coreutils ];
           config = {
-            Cmd = [ "..." ];
-            Env = [ "..." ];
+            Cmd = [
+              "${venv}/bin/python"
+              "${./src/manage.py}"
+              "runserver"
+              "0.0.0.0:8000"
+            ];
+            # Env = [ "..." ];
           };
           # extraCommands = ''
           #   mkdir -p .data
