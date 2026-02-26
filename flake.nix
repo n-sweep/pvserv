@@ -1,6 +1,7 @@
 {
 
   # https://github.com/pyproject-nix/uv2nix
+  # curl -O https://raw.githubusercontent.com/n-sweep/uv2nix/main/flake.nix
 
   description = "a uv2nix devshell";
 
@@ -36,16 +37,16 @@
     ...
   }:
   let
+    systems = [ "x86_64-linux" "aarch64-darwin" ];
+    forAllSystems = nixpkgs.lib.genAttrs systems;
 
     venvName = "venv";
-    pkgs = nixpkgs.legacyPackages.x86_64-linux;
-    python = pkgs.python313;
-
 
     # build system overrides for problem libraries
     # see also:
     #   - https://pyproject-nix.github.io/uv2nix/patterns/overriding-build-systems.html
     #   - https://github.com/pyproject-nix/uv2nix/issues/117
+
     pyprojectOverrides = final: prev:
     let
       inherit (final) resolveBuildSystem;
@@ -62,64 +63,98 @@
         })
       ) overrides;
 
-
-    # build the venv
     workspace = uv2nix.lib.workspace.loadWorkspace { workspaceRoot = ./.; };
-    overlay = workspace.mkPyprojectOverlay { sourcePreference = "wheel"; };
 
-    baseSet = pkgs.callPackage pyproject-nix.build.packages {
-      inherit python;
-    };
+    mkVenv = system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+        python = pkgs.python313;
+        overlay = workspace.mkPyprojectOverlay { sourcePreference = "wheel"; };
 
-    pythonSet = baseSet.overrideScope (
-      pkgs.lib.composeManyExtensions [
-        pyproject-build-systems.overlays.default
-        overlay
-        pyprojectOverrides
-      ]
-    );
+        baseSet = pkgs.callPackage pyproject-nix.build.packages {
+          inherit python;
+        };
 
-    venv = pythonSet.mkVirtualEnv "${venvName}" workspace.deps.default;
+        pythonSet = baseSet.overrideScope (
+          pkgs.lib.composeManyExtensions [
+            pyproject-build-systems.overlays.default
+            overlay
+            pyprojectOverrides
+          ]
+        );
+
+        venv = pythonSet.mkVirtualEnv "${venvName}" workspace.deps.default;
+      in
+      { inherit pkgs python venv; };
 
   in
   {
-    devShells.x86_64-linux.default = pkgs.mkShell {
+    packages = forAllSystems (system:
+      let
+        inherit (mkVenv system) pkgs venv;
+      in
+      {
+        # build a package to run with `nix run`
+        default = pkgs.writeShellApplication {
+          name = "pvserv";
+          runtimeInputs = [ venv ];
+          text = ''${venv}/bin/python "$(git rev-parse --show-toplevel)"/src/manage.py runserver 0.0.0.0:8000'';
+        };
+        # build a docker image with `nix build .#docker`
+        docker = pkgs.dockerTools.buildLayeredImage {
+          name = "...";
+          tag = "latest";
+          contents = [ venv pkgs.coreutils ];
+          config = {
+            Cmd = [ "..." ];
+            Env = [ "..." ];
+          };
+          # extraCommands = ''
+          #   mkdir -p .data
+          # '';
+        };
+      });
 
-      packages = [ pkgs.uv venv ];
+    devShells = forAllSystems (system:
+      let
+        inherit (mkVenv system) pkgs venv;
+      in
+      {
+        # run a devshell with `nix develop`
+        default = pkgs.mkShell {
 
-      env = {
-        UV_NO_SYNC = "1";
-        UV_PYTHON = "${venv}/bin/python";
-        UV_PYTHON_DOWNLOADS = "never";
-        VIRTUAL_ENV = "${venv}";
-        VENV_NAME = "${venvName}";
-      };
+          packages = [ pkgs.uv venv ];
 
-      shellHook = ''
-        ln -sfn ${venv} .venv
+          env = {
+            UV_NO_SYNC = "1";
+            UV_PYTHON = "${venv}/bin/python";
+            UV_PYTHON_DOWNLOADS = "never";
+            VIRTUAL_ENV = "${venv}";
+            VENV_NAME = "${venvName}";
+            JUPYTER_PATH = "${venv}/share/jupyter";
+          };
 
-        # ensure ipykernel is available
-        uv add ipykernel
+          shellHook = ''
+            ln -sfn ${venv} .venv
 
-        # start the kernel
-        export KERNEL_NAME=$(basename ${venv})
-        python -m ipykernel install --user --name $KERNEL_NAME --display-name $VENV_NAME
+            # ensure ipykernel is available
+            uv add ipykernel
 
-        # set environment variable to display devshell name
-        ds=$(git rev-parse --show-toplevel 2>/dev/null)
+            # set environment variable to display devshell name
+            ds=$(git rev-parse --show-toplevel 2>/dev/null)
 
-        if [[ -z "$ds" ]]; then
-            ds=$VENV_NAME
-        fi
+            if [[ -z "$ds" ]]; then
+                ds=$VENV_NAME
+            fi
 
-        export DEVSHELL="$ds"
+            export DEVSHELL="$ds"
 
-        # cleanup
-        trap "unset DEVSHELL" EXIT
-        trap "jupyter kernelspec remove -f $KERNEL_NAME" EXIT
-      '';
+            # cleanup
+            trap "unset DEVSHELL" EXIT
+          '';
 
-    };
+        };
+      });
   };
 
 }

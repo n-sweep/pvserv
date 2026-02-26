@@ -1,14 +1,13 @@
 [project]
 name = "pvserv"
 version = "0.1.0"
-description = "A Plotly plot viewing server"
+description = "Plotly Viewing Server"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "flask",
-    "flask_socketio",
-    "ipykernel>=6.29.5",
-    "pandas>=2.2.3",
-    "plotly>=6.1.1",
-    "scikit-learn>=1.6.1",
+    "django>=6.0.2",
+    "ipykernel>=7.2.0",
+    "numpy>=2.4.2",
+    "pandas>=3.0.1",
+    "plotly>=6.5.2",
 ]

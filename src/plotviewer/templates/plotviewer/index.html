@@ -1,0 +1,35 @@
+{% extends "plotviewer/base.html" %}
+{% load static %}
+
+{% block content %}
+<div id="top-bar">
+    <span id="connection-indicator">🔴</span>
+    <span id="server-address">[{{ request.get_host }}]</span>
+    <span id="created-date">{% if plots %}{{ plots.0.created_at|date:"Y-m-d H:i:s" }}{% else %}No plot data to show{% endif %}</span>
+    <span id="title-text"></span>
+</div>
+<div id="sidebar" hx-ext="sse" sse-connect="{% url 'sse_stream' %}">
+    <ul id="recent-plots" sse-swap="new-plot" hx-swap="afterbegin">
+        {% for plot in plots %}
+            {% include "plotviewer/partials/plot_list_item.html" %}
+        {% empty %}
+            <li class="empty">No plots yet</li>
+        {% endfor %}
+    </ul>
+</div>
+<div id="main-content">
+    <div id="plot-container">
+        {% if plots %}
+            {% with plot=plots.0 %}
+                {% include "plotviewer/partials/plot.html" %}
+            {% endwith %}
+        {% else %}
+            <p>No plots to display</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'plotviewer/js/plot.js' %}"></script>
+{% endblock %}
