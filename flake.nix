@@ -113,7 +113,7 @@
             ];
           };
           extraCommands = ''
-            mkdir -p /data
+            mkdir -p data
           '';
         };
       });
