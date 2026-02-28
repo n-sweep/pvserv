@@ -48,3 +48,5 @@ TIME_ZONE = "UTC"
 USE_TZ = True
 
 STATIC_URL = "static/"
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = None
