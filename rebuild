@@ -1,8 +1,24 @@
 #!/usr/bin/env bash
 
-docker stop pvserv &&  \
-    docker rm pvserv &&  \
-    docker rmi pvserv &&  \
-    nix build .#docker &&  \
-    docker load < result &&  \
-    docker run -dit -p 8080:8080 --name pvserv pvserv:latest
+REPO_ROOT=$(git rev-parse --show-toplevel)
+
+echo
+echo 'removing old container & image'
+docker stop pvserv
+docker rm pvserv
+docker rmi pvserv
+
+echo
+echo 'rebuilding image'
+nix build .#docker
+
+echo
+echo 'loading image'
+docker load < result
+
+echo
+echo 'creating container'
+docker run -dit \
+  -p 8080:8080 \
+  -v  $REPO_ROOT/.data/db.sqlite3 \
+  --name pvserv pvserv:latest
