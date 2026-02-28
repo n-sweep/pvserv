@@ -2,6 +2,12 @@
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 
+cd $REPO_ROOT
+
+echo
+echo 'pulling changes'
+git pull
+
 echo
 echo 'removing old container & image'
 docker stop pvserv
@@ -15,6 +21,7 @@ nix build .#docker
 echo
 echo 'loading image'
 docker load < result
+echo 'load complete'
 
 echo
 echo 'creating container'
