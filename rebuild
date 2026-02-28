@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+docker stop pvserv &&  \
+    docker rm pvserv &&  \
+    docker rmi pvserv &&  \
+    nix build .#docker &&  \
+    docker load < result &&  \
+    docker run -dit -p 8080:8080 --name pvserv pvserv:latest
