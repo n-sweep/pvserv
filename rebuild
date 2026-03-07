@@ -17,11 +17,11 @@ docker rmi pvserv
 echo
 echo 'rebuilding image'
 nix build .#docker
+echo 'image build complete'
 
 echo
 echo 'loading image'
 docker load < result
-echo 'load complete'
 
 echo
 echo 'creating container'
