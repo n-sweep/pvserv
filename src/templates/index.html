@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="top-bar">
+    <span id="connection-indicator">🔴</span>
+    <span id="server-address">[{{ request.host }}]</span>
+    <span id="created-date">{% if plots %}{{ plots[0].created_at }}{% else %}No plot data to show{% endif %}</span>
+    <span id="title-text"></span>
+</div>
+<div id="sidebar" hx-ext="sse" sse-connect="{{ url_for('sse_stream') }}">
+    <ul id="recent-plots" sse-swap="new-plot" hx-swap="afterbegin">
+        {% for plot in plots %}
+            {% include "partials/plot_list_item.html" %}
+        {% else %}
+            <li class="empty">No plots yet</li>
+        {% endfor %}
+    </ul>
+</div>
+<div id="main-content">
+    <div id="plot-container">
+        {% if plots %}
+            {% set plot = plots[0] %}
+            {% include "partials/plot.html" %}
+        {% else %}
+            <p>No plots to display</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/plot.js') }}"></script>
+{% endblock %}

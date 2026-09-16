@@ -98,7 +98,7 @@
         default = pkgs.writeShellApplication {
           name = "pvserv";
           runtimeInputs = [ venv ];
-          text = ''${venv}/bin/python "$(git rev-parse --show-toplevel)"/src/manage.py runserver 0.0.0.0:8080'';
+          text = ''${venv}/bin/python "$(git rev-parse --show-toplevel)"/src/app.py'';
         };
         # build a docker image with `nix build .#docker`
         docker = pkgs.dockerTools.buildLayeredImage {
@@ -107,9 +107,8 @@
           contents = [ venv pkgs.coreutils pkgs.bash ];
           config = {
             Cmd = [
-              "${pkgs.bash}/bin/bash"
-              "-c"
-              "${venv}/bin/python ${./src/manage.py} migrate && ${venv}/bin/python ${./src/manage.py} runserver 0.0.0.0:8080"
+              "${venv}/bin/python"
+              "${./src/app.py}"
             ];
           };
           extraCommands = ''
