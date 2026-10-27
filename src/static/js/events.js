@@ -45,12 +45,5 @@ document.body.addEventListener('htmx:afterSwap', function(e) {
     if (!firstItem) return;
     toggleSelected(firstItem);
 
-    const preview = firstItem.querySelector('[data-plot-json]');
-    if (!preview) return;
-
-    const plotContainer = document.getElementById('plot-container');
-    if (plotContainer) {
-        plotContainer.innerHTML = '<div data-plot-json="' + preview.dataset.plotJson.replace(/"/g, '&quot;') + '"><div id="plot"></div></div>';
-        renderPlot();
-    }
+    htmx.ajax('GET', firstItem.getAttribute('hx-get'), {target: '#plot-container', swap: 'innerHTML'});
 });

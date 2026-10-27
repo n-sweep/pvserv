@@ -92,11 +92,14 @@ def get_plot(plot_id: int) -> dict | None:
     Returns
     -------
     dict or None
-        plot row with keys id, mime, created_at, data, or None;
-        data is None for non-plotly rows
+        plot row with keys id, mime, data, created_at, or None if no row has
+        that id; data is the stored value as-is: the figure JSON str for
+        plotly rows, bytes for images
     """
     with sqlite3.connect(app.config['db_file']) as con:
-        cur = con.execute(f'SELECT {PLOT_COLS} FROM plot WHERE id = ?', (plot_id,))
+        cur = con.execute(
+            'SELECT id, mime, data, created_at FROM plot WHERE id = ?', (plot_id,)
+        )
         row = cur.fetchone()
         if row is None:
             return None
@@ -159,6 +162,22 @@ def plot(plot_id: int) -> str:
     if p is None:
         abort(404)
     return render_template('partials/plot.html', plot=p)
+
+
+@app.get('/plotviewer/plot/<int:plot_id>/image')
+def plot_image(plot_id: int) -> Response:
+    p = get_plot(plot_id)
+    if p is None or not p['mime'].startswith('image/'):
+        abort(404)
+    return Response(
+        p['data'],
+        mimetype=p['mime'],
+        headers={
+            'Cache-Control': 'public, max-age=31536000, immutable',
+            'X-Content-Type-Options': 'nosniff',
+            'Content-Security-Policy': 'sandbox',
+        },
+    )
 
 
 @app.get('/plotviewer/events/')

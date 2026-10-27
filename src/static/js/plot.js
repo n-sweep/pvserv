@@ -1,12 +1,15 @@
 function renderPlot() {
-    const wrapper = document.querySelector('#plot-container [data-plot-json]');
+    const wrapper = document.querySelector('#plot-container [data-created-at]');
     if (!wrapper) return;
-
-    const jsonStr = wrapper.dataset.plotJson;
-    if (!jsonStr) return;
 
     const dateEl = document.getElementById('created-date');
     if (dateEl && wrapper.dataset.createdAt) dateEl.innerText = wrapper.dataset.createdAt;
+
+    const titleEl = document.getElementById('title-text');
+    if (titleEl) titleEl.innerText = '';
+
+    const jsonStr = wrapper.dataset.plotJson;
+    if (!jsonStr) return;
 
     try {
         const figure = JSON.parse(jsonStr);
