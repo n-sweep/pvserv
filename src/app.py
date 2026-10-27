@@ -11,6 +11,13 @@ app = Flask(__name__)
 app.config['db_file'] = os.environ.get('DB_PATH', '/data/db.sqlite3')
 
 
+PLOTLY_MIME = 'application/vnd.plotly.v1+json'
+
+# read-side column list; image bytes are never loaded here, so `data` is the
+# figure JSON for plotly rows and NULL for everything else
+PLOT_COLS = ( f"id, mime, created_at, CASE WHEN mime = '{PLOTLY_MIME}' THEN data END AS data")
+
+
 def init_db() -> None:
     """create the plot table if it does not exist."""
     with sqlite3.connect(app.config['db_file']) as con:
@@ -18,33 +25,38 @@ def init_db() -> None:
             """
             CREATE TABLE IF NOT EXISTS plot (
                 id         INTEGER PRIMARY KEY AUTOINCREMENT,
-                json       TEXT NOT NULL,
+                mime       TEXT NOT NULL,
+                data       BLOB NOT NULL,
                 created_at TEXT NOT NULL
             )
             """
         )
 
 
-def create_plot(data: str) -> dict:
+def create_plot(data: str | bytes, mime: str = PLOTLY_MIME) -> dict:
     """insert a new plot and return it as a dict.
 
     Parameters
     ----------
-    data : str
-        raw plotly figure JSON string
+    data : str or bytes
+        raw plotly figure JSON string, or decoded image bytes
+    mime : str, optional
+        mime type of the data, by default the plotly figure type
 
     Returns
     -------
     dict
-        the newly created plot row with keys id, json, created_at
+        the newly created plot row with keys id, mime, created_at, data;
+        data is None for non-plotly rows
     """
     now = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
     with sqlite3.connect(app.config['db_file']) as con:
         cur = con.execute(
-            'INSERT INTO plot (json, created_at) VALUES (?, ?)', (data, now)
+            'INSERT INTO plot (mime, data, created_at) VALUES (?, ?, ?)',
+            (mime, data, now),
         )
         con.commit()
-        cur = con.execute('SELECT * FROM plot WHERE id = ?', (cur.lastrowid,))
+        cur = con.execute(f'SELECT {PLOT_COLS} FROM plot WHERE id = ?', (cur.lastrowid,))
         cols = [desc[0] for desc in cur.description]
         return dict(zip(cols, cur.fetchone()))
 
@@ -60,12 +72,11 @@ def get_recent_plots(n: int = 20) -> list[dict]:
     Returns
     -------
     list[dict]
-        list of plot rows with keys id, json, created_at
+        list of plot rows with keys id, mime, created_at, data;
+        data is None for non-plotly rows
     """
     with sqlite3.connect(app.config['db_file']) as con:
-        cur = con.execute(
-            'SELECT * FROM plot ORDER BY created_at DESC LIMIT ?', (n,)
-        )
+        cur = con.execute(f'SELECT {PLOT_COLS} FROM plot ORDER BY created_at DESC LIMIT ?', (n,))
         cols = [desc[0] for desc in cur.description]
         return [dict(zip(cols, row)) for row in cur.fetchall()]
 
@@ -81,10 +92,11 @@ def get_plot(plot_id: int) -> dict | None:
     Returns
     -------
     dict or None
-        plot row with keys id, json, created_at, or None
+        plot row with keys id, mime, created_at, data, or None;
+        data is None for non-plotly rows
     """
     with sqlite3.connect(app.config['db_file']) as con:
-        cur = con.execute('SELECT * FROM plot WHERE id = ?', (plot_id,))
+        cur = con.execute(f'SELECT {PLOT_COLS} FROM plot WHERE id = ?', (plot_id,))
         row = cur.fetchone()
         if row is None:
             return None

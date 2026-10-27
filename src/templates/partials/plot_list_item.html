@@ -1,4 +1,4 @@
-<li class="plot-item" hx-get="{{ url_for('plot_detail', plot_id=plot['id']) }}" hx-target="#plot-container" hx-swap="innerHTML">
+<li class="plot-item" hx-get="{{ url_for('plot', plot_id=plot['id']) }}" hx-target="#plot-container" hx-swap="innerHTML">
     <span class="plot-item-date">{{ plot['created_at'] }}</span>
-    <div class="plot-item-preview" data-plot-json="{{ plot['json'] }}"></div>
+    <div class="plot-item-preview" data-plot-json="{{ plot['data'] }}"></div>
 </li>
