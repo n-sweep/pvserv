@@ -142,8 +142,13 @@ def index() -> str:
 @app.post('/plotviewer/plot')
 @app.post('/plotviewer/plot/')
 def handle_new_plot() -> tuple[str, int]:
-    data = request.get_data(as_text=True)
-    plot = create_plot(data)
+    mime = request.mimetype
+    if mime.startswith('image/'):
+        data = request.get_data()
+    else:
+        mime = PLOTLY_MIME
+        data = request.get_data(as_text=True)
+    plot = create_plot(data, mime)
     broker.publish('new-plot', plot)
     return '', 201
 
